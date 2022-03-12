@@ -82,13 +82,21 @@ class _ECVerifyingKey:
 
 
 class AuthorizedKeysFile:  # pylint:disable=too-few-public-methods
-    """Represents a full authorized_keys file.
+    """
+    Represents a full authorized_keys file.
 
-    Comments and empty lines are ignored."""
+    Comments and empty lines are ignored.
+    """
 
     def __init__(self, file_obj, **kwargs):
         self.keys = []
         self.parse(file_obj, **kwargs)
+
+    def __str__(self):
+        output = []
+        for ssh_key in self.keys:
+            output.append(str(ssh_key))
+        return "\n".join(output)
 
     def parse(self, file_obj, **kwargs):
         for line in file_obj:
@@ -183,8 +191,11 @@ class SSHKey:  # pylint:disable=too-many-instance-attributes
             except (InvalidKeyError, NotImplementedError):
                 pass
 
-    def __str__(self):
+    def __repr__(self):
         return f"Key type: {self.key_type.decode()}, bits: {self.bits}, options: {self.options}"
+
+    def __str__(self):
+        return f"{self.keydata}"
 
     def reset(self):
         """Reset all data fields."""
